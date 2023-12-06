@@ -1,0 +1,3 @@
+package arithmetic
+
+class OptimizedStack2Suite extends ArithmeticSuite(OptimizedStack2.Expression)
