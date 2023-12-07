@@ -3,12 +3,6 @@ package arithmetic
 object BasicStack {
 
   enum Expression extends arithmetic.Expression[Expression] {
-    case Literal(value: Double)
-    case Addition(left: Expression, right: Expression)
-    case Subtraction(left: Expression, right: Expression)
-    case Multiplication(left: Expression, right: Expression)
-    case Division(left: Expression, right: Expression)
-
     def +(that: Expression): Expression = Addition(this, that)
     def *(that: Expression): Expression = Multiplication(this, that)
     def -(that: Expression): Expression = Subtraction(this, that)
@@ -32,6 +26,12 @@ object BasicStack {
     }
 
     def eval: Double = compile.eval
+
+    case Literal(value: Double)
+    case Addition(left: Expression, right: Expression)
+    case Subtraction(left: Expression, right: Expression)
+    case Multiplication(left: Expression, right: Expression)
+    case Division(left: Expression, right: Expression)
   }
   object Expression extends arithmetic.ExpressionConstructors[Expression] {
     def literal(value: Double): Expression = Literal(value)
@@ -51,36 +51,48 @@ object BasicStack {
     def eval: Double = machine.eval
   }
 
-  class StackMachine(val program: List[Op]) {
+  final case class StackMachine(program: List[Op]) {
     def eval: Double = {
-      def pop2(data: List[Double]): (Double, Double, List[Double]) =
-        data match {
-          case a :: b :: next => (a, b, next)
-          case other =>
+      def pop(stack: List[Double]): (Double, List[Double]) =
+        stack match {
+          case head :: next => (head, next)
+          case Nil =>
             throw new IllegalStateException(
-              s"The data stack does not have the required two elements. Stack: $data"
+              s"The data stack does not have any elements."
             )
         }
-      def loop(data: List[Double], program: List[Op]): Double =
+
+      def push(value: Double, stack: List[Double]): List[Double] =
+        value :: stack
+
+      def loop(stack: List[Double], program: List[Op]): Double =
         program match {
           case head :: next =>
             head match {
-              case Op.Lit(value) => loop(value :: data, next)
+              case Op.Lit(value) => loop(push(value, stack), next)
               case Op.Add =>
-                val (a, b, rest) = pop2(data)
-                loop((a + b) :: rest, next)
+                val (a, s1) = pop(stack)
+                val (b, s2) = pop(s1)
+                val s = push(a + b, s2)
+                loop(s, next)
               case Op.Sub =>
-                val (a, b, rest) = pop2(data)
-                loop((a - b) :: rest, next)
+                val (a, s1) = pop(stack)
+                val (b, s2) = pop(s1)
+                val s = push(a + b, s2)
+                loop(s, next)
               case Op.Mul =>
-                val (a, b, rest) = pop2(data)
-                loop((a * b) :: rest, next)
+                val (a, s1) = pop(stack)
+                val (b, s2) = pop(s1)
+                val s = push(a + b, s2)
+                loop(s, next)
               case Op.Div =>
-                val (a, b, rest) = pop2(data)
-                loop((a / b) :: rest, next)
+                val (a, s1) = pop(stack)
+                val (b, s2) = pop(s1)
+                val s = push(a + b, s2)
+                loop(s, next)
             }
 
-          case Nil => data.head
+          case Nil => stack.head
         }
 
       loop(List.empty, program)
