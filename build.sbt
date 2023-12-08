@@ -39,8 +39,13 @@ lazy val core = project.in(file("core")).settings(commonSettings)
 lazy val benchmarks = project
   .in(file("benchmarks"))
   .settings(
-    // javaOptions ++= Seq("-Xbatch",
-    //                     "-XX:+UnlockDiagnosticVMOptions",
+    javaOptions ++= Seq("-Xbatch",
+                        "-XX:+UnlockExperimentalVMOptions",
+                        "-XX:+UnlockDiagnosticVMOptions",
+                        "-XX:-TieredCompilation")
+                        // "-XX:MaxInlineSize=300")
+                        // "-XX:+LogCompilation")
+                        // "-XX:CompileThreshold=1000")
     //                     "-XX:CompileCommand=print,arithmetic/OptimizedStack2$StackMachine.eval",
     //                     "-XX:CompileCommand=print,arithmetic/OptimizedStack$StackMachine.loop*")
   )

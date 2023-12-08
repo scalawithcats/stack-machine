@@ -1,0 +1,3 @@
+package arithmetic
+
+class SuperInstructionSuite extends ArithmeticSuite(SuperInstruction.Expression)

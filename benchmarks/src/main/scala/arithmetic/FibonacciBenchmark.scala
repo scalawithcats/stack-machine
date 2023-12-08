@@ -22,7 +22,7 @@ import java.util.concurrent.TimeUnit.SECONDS
 
 @State(Scope.Benchmark)
 @Warmup(iterations = 5, time = 1, timeUnit = SECONDS)
-@Measurement(iterations = 1, time = 1, timeUnit = SECONDS)
+@Measurement(iterations = 5, time = 1, timeUnit = SECONDS)
 class FibonnaciBenchmark {
   def makeFibonacci[E <: Expression[E]](
       n: Int,
@@ -48,6 +48,12 @@ class FibonnaciBenchmark {
     makeFibonacci(nFib, OptimizedStack2.Expression).compile
   val optimizedStack3Fib =
     makeFibonacci(nFib, OptimizedStack3.Expression).compile
+  val stackCachingFib =
+    makeFibonacci(nFib, StackCaching.Expression).compile
+  val superInstructionFib =
+    makeFibonacci(nFib, SuperInstruction.Expression).compile
+  val byteCodeFib =
+    makeFibonacci(nFib, ByteCode.Expression).compile
 
   @Benchmark
   def baseFibBenchmark(): Unit = {
@@ -72,5 +78,20 @@ class FibonnaciBenchmark {
   @Benchmark
   def optimizedStack3FibBenchmark(): Unit = {
     assert(optimizedStack3Fib.eval == expected)
+  }
+
+  @Benchmark
+  def stackCachingFibBenchmark(): Unit = {
+    assert(stackCachingFib.eval == expected)
+  }
+
+  @Benchmark
+  def superInstructionFibBenchmark(): Unit = {
+    assert(superInstructionFib.eval == expected)
+  }
+
+  @Benchmark
+  def byteCodeFibBenchmark(): Unit = {
+    assert(byteCodeFib.eval == expected)
   }
 }

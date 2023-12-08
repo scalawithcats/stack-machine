@@ -1,6 +1,6 @@
 package arithmetic
 
-object OptimizedStack {
+object SuperInstruction {
 
   enum Expression extends arithmetic.Expression[Expression] {
     case Literal(value: Double)
@@ -17,7 +17,11 @@ object OptimizedStack {
     def compile: Program = {
       def loop(expr: Expression): List[Op] =
         expr match {
-          case Literal(value) => List(Op.Lit(value))
+          // case Addition(Literal(0.0), expr) => loop(expr)
+          // case Addition(expr, Literal(0.0)) => loop(expr)
+          case Addition(Literal(v), expr) => loop(expr) ++ List(Op.AddLit(v))
+          case Addition(expr, Literal(v)) => loop(expr) ++ List(Op.AddLit(v))
+          case Literal(value)             => List(Op.Lit(value))
           case Addition(left, right) =>
             loop(left) ++ loop(right) ++ List(Op.Add)
           case Subtraction(left, right) =>
@@ -39,6 +43,7 @@ object OptimizedStack {
 
   enum Op {
     case Lit(value: Double)
+    case AddLit(value: Double)
     case Add
     case Sub
     case Mul
@@ -62,9 +67,13 @@ object OptimizedStack {
         if (pc == program.size) stack(sp - 1)
         else
           program(pc) match {
-            case Op.Lit(value) =>
-              stack(sp) = value
+            case op: Op.Lit =>
+              stack(sp) = op.value
               loop(sp + 1, pc + 1)
+            case op: Op.AddLit =>
+              val a = stack(sp - 1)
+              stack(sp - 1) = a + op.value
+              loop(sp, pc + 1)
             case Op.Add =>
               val a = stack(sp - 1)
               val b = stack(sp - 2)

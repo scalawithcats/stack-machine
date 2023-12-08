@@ -1,6 +1,6 @@
 package arithmetic
 
-object OptimizedStack {
+object StackCaching {
 
   enum Expression extends arithmetic.Expression[Expression] {
     case Literal(value: Double)
@@ -56,38 +56,38 @@ object OptimizedStack {
     private val stack: Array[Double] = Array.ofDim[Double](256)
 
     final def eval: Double = {
-      // sp points to first free element on the stack
-      // stack(sp - 1) is the first element
-      def loop(sp: Int, pc: Int): Double =
-        if (pc == program.size) stack(sp - 1)
-        else
-          program(pc) match {
-            case Op.Lit(value) =>
-              stack(sp) = value
-              loop(sp + 1, pc + 1)
-            case Op.Add =>
-              val a = stack(sp - 1)
-              val b = stack(sp - 2)
-              stack(sp - 2) = (a + b)
-              loop(sp - 1, pc + 1)
-            case Op.Sub =>
-              val a = stack(sp - 1)
-              val b = stack(sp - 2)
-              stack(sp - 2) = (a - b)
-              loop(sp - 1, pc + 1)
-            case Op.Mul =>
-              val a = stack(sp - 1)
-              val b = stack(sp - 2)
-              stack(sp - 2) = (a * b)
-              loop(sp - 1, pc + 1)
-            case Op.Div =>
-              val a = stack(sp - 1)
-              val b = stack(sp - 2)
-              stack(sp - 2) = (a / b)
-              loop(sp - 1, pc + 1)
-          }
+      // The top of the stack
+      var top: Double = 0.0
+      var sp: Int = 0
+      var pc: Int = 0
 
-      loop(0, 0)
+      val size = program.size
+      while (pc < size) {
+        program(pc) match {
+          case Op.Lit(value) =>
+            stack(sp) = top
+            top = value
+            sp = sp + 1
+            pc = pc + 1
+          case Op.Add =>
+            sp = sp - 1
+            top = top + stack(sp)
+            pc = pc + 1
+          case Op.Sub =>
+            sp = sp - 1
+            top = top - stack(sp)
+            pc = pc + 1
+          case Op.Mul =>
+            sp = sp - 1
+            top = top * stack(sp)
+            pc = pc + 1
+          case Op.Div =>
+            sp = sp - 1
+            top = top / stack(sp)
+            pc = pc + 1
+        }
+      }
+      top
     }
   }
 }
