@@ -50,29 +50,29 @@ object ByteCode {
       def loop(expr: Expression): Unit =
         expr match {
           case Literal(value) =>
-            program(pp) = Op.Lit
+            program(pp) = Op.Lit.code
             data(dp) = value
             pp = pp + 1
             dp = dp + 1
           case Addition(left, right) =>
             loop(left)
             loop(right)
-            program(pp) = Op.Add
+            program(pp) = Op.Add.code
             pp = pp + 1
           case Subtraction(left, right) =>
             loop(left)
             loop(right)
-            program(pp) = Op.Sub
+            program(pp) = Op.Sub.code
             pp = pp + 1
           case Multiplication(left, right) =>
             loop(left)
             loop(right)
-            program(pp) = Op.Mul
+            program(pp) = Op.Mul.code
             pp = pp + 1
           case Division(left, right) =>
             loop(left)
             loop(right)
-            program(pp) = Op.Div
+            program(pp) = Op.Div.code
             pp = pp + 1
         }
 
@@ -89,12 +89,15 @@ object ByteCode {
     def literal(value: Double): Expression = Literal(value)
   }
 
-  object Op {
-    val Lit: Byte = 0
-    val Add: Byte = 1
-    val Sub: Byte = 2
-    val Mul: Byte = 3
-    val Div: Byte = 4
+  enum Op {
+    val code: Byte =
+      this.ordinal.toByte
+
+    case Lit
+    case Add
+    case Sub
+    case Mul
+    case Div
   }
 
   final case class Program(program: IArray[Byte], data: IArray[Double]) {
@@ -114,25 +117,25 @@ object ByteCode {
         if (pc == program.size) stack(sp - 1)
         else
           program(pc) match {
-            case Op.Lit =>
+            case Op.Lit.code =>
               stack(sp) = data(dp)
               loop(sp + 1, dp + 1, pc + 1)
-            case Op.Add =>
+            case Op.Add.code =>
               val a = stack(sp - 1)
               val b = stack(sp - 2)
               stack(sp - 2) = (a + b)
               loop(sp - 1, dp, pc + 1)
-            case Op.Sub =>
+            case Op.Sub.code =>
               val a = stack(sp - 1)
               val b = stack(sp - 2)
               stack(sp - 2) = (a - b)
               loop(sp - 1, dp, pc + 1)
-            case Op.Mul =>
+            case Op.Mul.code =>
               val a = stack(sp - 1)
               val b = stack(sp - 2)
               stack(sp - 2) = (a * b)
               loop(sp - 1, dp, pc + 1)
-            case Op.Div =>
+            case Op.Div.code =>
               val a = stack(sp - 1)
               val b = stack(sp - 2)
               stack(sp - 2) = (a / b)
