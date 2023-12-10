@@ -54,6 +54,10 @@ class FibonnaciBenchmark {
     makeFibonacci(nFib, SuperInstruction.Expression).compile
   val byteCodeFib =
     makeFibonacci(nFib, ByteCode.Expression).compile
+  val algebraicSimplificationFib =
+    makeFibonacci(nFib, AlgebraicSimplification.Expression).compile
+  val allFib =
+    makeFibonacci(nFib, All.Expression).compile
 
   @Benchmark
   def baseFibBenchmark(): Unit = {
@@ -93,5 +97,15 @@ class FibonnaciBenchmark {
   @Benchmark
   def byteCodeFibBenchmark(): Unit = {
     assert(byteCodeFib.eval == expected)
+  }
+
+  @Benchmark
+  def algebraicSimplificationFibBenchmark(): Unit = {
+    assert(algebraicSimplificationFib.eval == expected)
+  }
+
+  @Benchmark
+  def allFibBenchmark(): Unit = {
+    assert(allFib.eval == expected)
   }
 }
