@@ -12,16 +12,16 @@ Global / onChangedBuildSource := ReloadOnSourceChanges
 
 val commonSettings = Seq(
   libraryDependencies ++= Seq(
-      "org.typelevel" %% "cats-core" % "2.10.0",
-      "org.typelevel" %% "cats-effect" % "3.5.2",
-      "org.scalameta" %% "munit" % "0.7.29" % Test,
-      "org.typelevel" %% "munit-cats-effect-3" % "1.0.7" % Test,
+    "org.typelevel" %% "cats-core" % "2.10.0",
+    "org.typelevel" %% "cats-effect" % "3.5.2",
+    "org.scalameta" %% "munit" % "0.7.29" % Test,
+    "org.typelevel" %% "munit-cats-effect-3" % "1.0.7" % Test
   )
 )
 
 // Run this command (build) to do everything involved in building the project
 commands += Command.command("build") { state =>
-    "clean" ::
+  "clean" ::
     "compile" ::
     "test" ::
     "scalafixAll" ::
@@ -39,13 +39,15 @@ lazy val core = project.in(file("core")).settings(commonSettings)
 lazy val benchmarks = project
   .in(file("benchmarks"))
   .settings(
-    javaOptions ++= Seq("-Xbatch",
-                        "-XX:+UnlockExperimentalVMOptions",
-                        "-XX:+UnlockDiagnosticVMOptions",
-                        "-XX:-TieredCompilation")
-                        // "-XX:MaxInlineSize=300")
-                        // "-XX:+LogCompilation")
-                        // "-XX:CompileThreshold=1000")
+    javaOptions ++= Seq(
+      "-Xbatch",
+      "-XX:+UnlockExperimentalVMOptions",
+      "-XX:+UnlockDiagnosticVMOptions",
+      "-XX:-TieredCompilation"
+    )
+    // "-XX:MaxInlineSize=300")
+    // "-XX:+LogCompilation")
+    // "-XX:CompileThreshold=1000")
     //                     "-XX:CompileCommand=print,arithmetic/OptimizedStack2$StackMachine.eval",
     //                     "-XX:CompileCommand=print,arithmetic/OptimizedStack$StackMachine.loop*")
   )
