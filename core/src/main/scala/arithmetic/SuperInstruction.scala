@@ -33,11 +33,11 @@ object SuperInstruction {
     def compile: Program = {
       def loop(expr: Expression): List[Op] =
         expr match {
-          // case Addition(Literal(0.0), expr) => loop(expr)
-          // case Addition(expr, Literal(0.0)) => loop(expr)
-          case Addition(Literal(v), expr) => loop(expr) ++ List(Op.AddLit(v))
-          case Addition(expr, Literal(v)) => loop(expr) ++ List(Op.AddLit(v))
-          case Literal(value)             => List(Op.Lit(value))
+          case Addition(Literal(1.0), expr) => loop(expr) ++ List(Op.AddOne)
+          case Addition(expr, Literal(1.0)) => loop(expr) ++ List(Op.AddOne)
+          case Addition(Literal(v), expr)   => loop(expr) ++ List(Op.AddLit(v))
+          case Addition(expr, Literal(v))   => loop(expr) ++ List(Op.AddLit(v))
+          case Literal(value)               => List(Op.Lit(value))
           case Addition(left, right) =>
             loop(left) ++ loop(right) ++ List(Op.Add)
           case Subtraction(left, right) =>
@@ -59,6 +59,7 @@ object SuperInstruction {
 
   enum Op {
     case Lit(value: Double)
+    case AddOne
     case AddLit(value: Double)
     case Add
     case Sub
@@ -86,6 +87,10 @@ object SuperInstruction {
             case op: Op.Lit =>
               stack(sp) = op.value
               loop(sp + 1, pc + 1)
+            case Op.AddOne =>
+              val a = stack(sp - 1)
+              stack(sp - 1) = a + 1
+              loop(sp, pc + 1)
             case op: Op.AddLit =>
               val a = stack(sp - 1)
               stack(sp - 1) = a + op.value
