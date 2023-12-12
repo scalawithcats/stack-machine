@@ -22,7 +22,7 @@ import java.util.concurrent.TimeUnit.SECONDS
 
 @State(Scope.Benchmark)
 @Warmup(iterations = 5, time = 1, timeUnit = SECONDS)
-@Measurement(iterations = 5, time = 1, timeUnit = SECONDS)
+@Measurement(iterations = 5, time = 2, timeUnit = SECONDS)
 class FibonnaciBenchmark {
   def makeFibonacci[E <: Expression[E]](
       n: Int,
