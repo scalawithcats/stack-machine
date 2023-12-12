@@ -22,7 +22,7 @@ Ryzen 5 3600, JDK 21
 [info] FibonnaciBenchmark.optimizedStack3FibBenchmark          thrpt   25  3567.815 ±  50.533  ops/s
 [info] FibonnaciBenchmark.optimizedStackFibBenchmark           thrpt   25  3631.189 ±   8.750  ops/s
 [info] FibonnaciBenchmark.stackCachingFibBenchmark             thrpt   25  3698.103 ± 108.849  ops/s
-[info] FibonnaciBenchmark.superInstructionFibBenchmark         thrpt   25  1239.706 ± 364.866  ops/s
+[info] FibonnaciBenchmark.superInstructionFibBenchmark         thrpt   25  3706.695 ±  79.696  ops/s
 ```
 
 
