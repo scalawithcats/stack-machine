@@ -58,6 +58,8 @@ class FibonnaciBenchmark {
     makeFibonacci(nFib, AlgebraicSimplification.Expression).compile
   val allFib =
     makeFibonacci(nFib, All.Expression).compile
+  val directThreadedFib =
+    makeFibonacci(nFib, DirectThreaded.Expression).compile
 
   @Benchmark
   def baseFibBenchmark(): Unit = {
@@ -107,5 +109,10 @@ class FibonnaciBenchmark {
   @Benchmark
   def allFibBenchmark(): Unit = {
     assert(allFib.eval == expected)
+  }
+
+  @Benchmark
+  def directThreadedFibBenchmark(): Unit = {
+    assert(directThreadedFib.eval == expected)
   }
 }

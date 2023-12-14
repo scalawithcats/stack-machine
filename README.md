@@ -35,6 +35,7 @@ M1, JDK 21
 [info] FibonnaciBenchmark.baseFibBenchmark                     thrpt   25  3934.926 ± 20.942  ops/s
 [info] FibonnaciBenchmark.basicStackFibBenchmark               thrpt   25  1004.157 ± 14.752  ops/s
 [info] FibonnaciBenchmark.byteCodeFibBenchmark                 thrpt   25  3355.754 ± 15.455  ops/s
+[info] FibonnaciBenchmark.directThreadedFibBenchmark           thrpt   25  611167913.856 ± 3757656.851  ops/s
 [info] FibonnaciBenchmark.optimizedStack2FibBenchmark          thrpt   25  2953.961 ± 10.760  ops/s
 [info] FibonnaciBenchmark.optimizedStack3FibBenchmark          thrpt   25  2962.975 ± 24.769  ops/s
 [info] FibonnaciBenchmark.optimizedStackFibBenchmark           thrpt   25  2953.212 ± 21.948  ops/s
