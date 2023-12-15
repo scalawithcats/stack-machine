@@ -16,7 +16,7 @@
 
 package arithmetic
 
-object DirectThreaded {
+object DirectThreaded3 {
 
   enum Expression extends arithmetic.Expression[Expression] {
     case Literal(value: Double)
@@ -34,15 +34,15 @@ object DirectThreaded {
       val machine = new StackMachine()
       def loop(expr: Expression): List[machine.Op] =
         expr match {
-          case Literal(value) => List(machine.Op.Lit(value))
+          case Literal(value) => List(machine.Lit(value))
           case Addition(left, right) =>
-            loop(left) ++ loop(right) ++ List(machine.Op.Add)
+            loop(left) ++ loop(right) ++ List(machine.Add)
           case Subtraction(left, right) =>
-            loop(left) ++ loop(right) ++ List(machine.Op.Sub)
+            loop(left) ++ loop(right) ++ List(machine.Sub)
           case Multiplication(left, right) =>
-            loop(left) ++ loop(right) ++ List(machine.Op.Mul)
+            loop(left) ++ loop(right) ++ List(machine.Mul)
           case Division(left, right) =>
-            loop(left) ++ loop(right) ++ List(machine.Op.Div)
+            loop(left) ++ loop(right) ++ List(machine.Div)
         }
 
       Program(machine)(loop(this).toArray)
@@ -67,45 +67,51 @@ object DirectThreaded {
     // ip points to the current instruction
     private var ip: Int = 0
 
-    enum Op extends Function0[Unit] {
+    sealed abstract class Op extends Function0[Unit]
+    final case class Lit(value: Double) extends Op {
+      def apply(): Unit = {
+        stack(sp) = value
+        sp = sp + 1
+        ip = ip + 1
+      }
+    }
+    case object Add extends Op {
+      def apply(): Unit = {
+        val a = stack(sp - 1)
+        val b = stack(sp - 2)
+        stack(sp - 2) = (a + b)
+        sp = sp - 1
+        ip = ip + 1
+      }
+    }
+    case object Sub extends Op {
+      def apply(): Unit = {
+        val a = stack(sp - 1)
+        val b = stack(sp - 2)
+        stack(sp - 2) = (a - b)
+        sp = sp - 1
+        ip = ip + 1
+      }
 
-      def apply(): Unit =
-        this match {
-          case Lit(value) =>
-            stack(sp) = value
-            sp = sp + 1
-            ip = ip + 1
-          case Add =>
-            val a = stack(sp - 1)
-            val b = stack(sp - 2)
-            stack(sp - 2) = (a + b)
-            sp = sp - 1
-            ip = ip + 1
-          case Sub =>
-            val a = stack(sp - 1)
-            val b = stack(sp - 2)
-            stack(sp - 2) = (a - b)
-            sp = sp - 1
-            ip = ip + 1
-          case Mul =>
-            val a = stack(sp - 1)
-            val b = stack(sp - 2)
-            stack(sp - 2) = (a * b)
-            sp = sp - 1
-            ip = ip + 1
-          case Div =>
-            val a = stack(sp - 1)
-            val b = stack(sp - 2)
-            stack(sp - 2) = (a / b)
-            sp = sp - 1
-            ip = ip + 1
-        }
+    }
+    case object Mul extends Op {
+      def apply(): Unit = {
+        val a = stack(sp - 1)
+        val b = stack(sp - 2)
+        stack(sp - 2) = (a * b)
+        sp = sp - 1
+        ip = ip + 1
+      }
+    }
+    case object Div extends Op {
+      def apply(): Unit = {
+        val a = stack(sp - 1)
+        val b = stack(sp - 2)
+        stack(sp - 2) = (a / b)
+        sp = sp - 1
+        ip = ip + 1
 
-      case Lit(value: Double)
-      case Add
-      case Sub
-      case Mul
-      case Div
+      }
     }
 
     final def eval(program: Array[Op]): Double = {
