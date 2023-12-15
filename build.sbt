@@ -40,16 +40,23 @@ lazy val benchmarks = project
   .in(file("benchmarks"))
   .settings(
     javaOptions ++= Seq(
-      "-Xbatch",
       "-XX:+UnlockExperimentalVMOptions",
       "-XX:+UnlockDiagnosticVMOptions",
+      // Disable C1 compiler, making logs easier to read
       "-XX:-TieredCompilation"
+      // Print all assembly
+      // You'll need to install hsdis, available from https://chriswhocodes.com/hsdis/
+      // "-XX:+PrintAssembly",
+      // "-XX:+DebugNonSafepoints",
+      // "-Xlog:class+load=info",
+      // The log file produced by this can be viewed with JITWatch: https://github.com/AdoptOpenJDK/jitwatch
+      // "-XX:+LogCompilation",
+      // Print assembly only for specific methods
+      // "-XX:CompileCommand=print,arithmetic/DirectThreaded$Expression.eval*",
+      // "-XX:CompileCommand=print,arithmetic/DirectThreaded$StackMachine.eval*",
+      // "-XX:CompileCommand=print,arithmetic/DirectThreaded$StackMachine.trampoline*",
+      // "-XX:CompileCommand=print,arithmetic/DirectThreaded$StackMachine$Op.apply*"
     )
-    // "-XX:MaxInlineSize=300")
-    // "-XX:+LogCompilation")
-    // "-XX:CompileThreshold=1000")
-    //                     "-XX:CompileCommand=print,arithmetic/OptimizedStack2$StackMachine.eval",
-    //                     "-XX:CompileCommand=print,arithmetic/OptimizedStack$StackMachine.loop*")
   )
   .enablePlugins(JmhPlugin)
   .dependsOn(core)
